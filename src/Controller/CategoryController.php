@@ -32,11 +32,10 @@ class CategoryController extends AbstractController
             throw $this->createNotFoundException(
                 'No category with name : ' . $categoryName . ' found in category\'s table.'
             );
-        } else {
-            $programs = $programRepository->findBy(['category' => $category], ['id' => 'DESC'], 3);
-            return $this->render('category/show.html.twig', [
-                'category' => $category, 'programs' => $programs,
-            ]);
         }
+        $programs = $programRepository->findBy(['category' => $category], ['id' => 'DESC'], 3);
+        return $this->render('category/show.html.twig', [
+            'category' => $category, 'programs' => $programs,
+        ]);
     }
 }
