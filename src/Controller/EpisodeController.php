@@ -28,7 +28,7 @@ class EpisodeController extends AbstractController
         $form = $this->createForm(EpisodeType::class, $episode);
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
+        if ($form->isSubmitted()  && $form->isValid() && $form->isValid()) {
             $episodeRepository->add($episode, true);
 
             return $this->redirectToRoute('app_episode_index', [], Response::HTTP_SEE_OTHER);
@@ -54,7 +54,7 @@ class EpisodeController extends AbstractController
         $form = $this->createForm(EpisodeType::class, $episode);
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
+        if ($form->isSubmitted()  && $form->isValid() && $form->isValid()) {
             $episodeRepository->add($episode, true);
 
             return $this->redirectToRoute('app_episode_index', [], Response::HTTP_SEE_OTHER);
@@ -69,7 +69,7 @@ class EpisodeController extends AbstractController
     #[Route('/{id}', name: 'app_episode_delete', methods: ['POST'])]
     public function delete(Request $request, Episode $episode, EpisodeRepository $episodeRepository): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$episode->getId(), $request->request->get('_token'))) {
+        if ($this->isCsrfTokenValid('delete' . $episode->getId(), $request->request->get('_token'))) {
             $episodeRepository->remove($episode, true);
         }
 
