@@ -3,12 +3,22 @@
 namespace App\DataFixtures;
 
 use App\Entity\Program;
+use App\Service\Slugify;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 
 class ProgramFixtures extends Fixture implements DependentFixtureInterface
 {
+
+    protected $slufigy;
+
+    public function __construct(Slugify $slugify)
+    {
+        $this->slufigy = $slugify;
+    }
+
+
     public const PROGRAMS = [
         ['title' => 'Star Wars: Obi-Wan Kenobi', 'poster' => 'https://fr.web.img2.acsta.net/c_310_420/pictures/22/05/04/16/20/1390919.jpg', 'synopsis' => 'L’action se déroule dix ans après la fin tragique de STAR WARS : LA REVANCHE DES SITH. Obi-Wan y avait subi sa plus grande défaite et assisté à la déchéance de son meilleur ami, l’apprenti Jedi Anakin Skywalker, qui avait rejoint le Côté Obscur en devenant le seigneur Sith Dark Vador.', 'category' => 'Science-fiction'],
         ['title' => 'The Boys', 'poster' => 'https://fr.web.img2.acsta.net/c_310_420/pictures/22/05/25/17/50/0161050.jpg', 'synopsis' => "Dans un monde fictif où les super-héros se sont laissés corrompre par la célébrité et la gloire et ont peu à peu révélé la part sombre de leur personnalité, une équipe de justiciers qui se fait appeler \"The Boys\" décide de passer à l'action et d'abattre ces super-héros autrefois appréciés de tous.", 'category' => 'Action'],
@@ -25,12 +35,15 @@ class ProgramFixtures extends Fixture implements DependentFixtureInterface
 
     public function load(ObjectManager $manager)
     {
-        foreach (self::PROGRAMS as $programItem) {
+        foreach (self::PROGRAMS as $key => $programItem) {
             $program = new Program();
-            $program->setTitle($programItem['title']);
-            $program->setSynopsis($programItem['synopsis']);
-            $program->setPoster($programItem['poster']);
-            $program->setCategory($this->getReference('category_' . $programItem['category']));
+            $program->setTitle($programItem['title'])
+                ->setSynopsis($programItem['synopsis'])
+                ->setPoster($programItem['poster'])
+                ->setCategory($this->getReference('category_' . $programItem['category']))
+                ->setSlug($this->slufigy->generate($programItem['title']));
+            $this->addReference('program_' . $key, $program);
+            // $program->addActor($this->getReference('actor_' . $key));
             $manager->persist($program);
         }
         $manager->flush();
@@ -41,6 +54,7 @@ class ProgramFixtures extends Fixture implements DependentFixtureInterface
     {
         return [
             CategoryFixtures::class,
+            ActorFixtures::class,
         ];
     }
 }

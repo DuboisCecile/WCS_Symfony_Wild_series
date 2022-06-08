@@ -13,6 +13,7 @@ use App\Form\ProgramType;
 use App\Entity\Program;
 use App\Entity\Season;
 use App\Entity\Episode;
+use App\Service\Slugify;
 
 #[Route('/program', name: 'program_')]
 class ProgramController extends AbstractController
@@ -34,17 +35,17 @@ class ProgramController extends AbstractController
      * Display the form or deal with it
      */
     #[Route('/new', name: 'new')]
-    public function new(Request $request, ProgramRepository $programRepository): Response
+    public function new(Request $request, ProgramRepository $programRepository, Slugify $slugify): Response
     {
         $program = new Program();
         $form = $this->createForm(ProgramType::class, $program);
         $form->handleRequest($request);
-        
+
         if ($form->isSubmitted()  && $form->isValid()) {
+            $slug = $slugify->generate($program->getTitle());
+            $program->setSlug($slug);
             $programRepository->add($program, true);
         }
-
-
 
         return $this->renderForm('program/new.html.twig', [
             'form' => $form,
@@ -52,7 +53,8 @@ class ProgramController extends AbstractController
     }
 
 
-    #[Route('/{id<^[0-9]+$>}', name: 'show')]
+    // #[Route('/{id<^[0-9]+$>}', name: 'show')]
+    #[Route('/{slug}', name: 'show')]
     public function show(Program $program, SeasonRepository $seasonRepository): Response
     {
         $seasons = $seasonRepository->findBy(['program' => $program]);
@@ -61,7 +63,8 @@ class ProgramController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}/edit', name: 'edit', methods: ['GET', 'POST'])]
+    // #[Route('/{id}/edit', name: 'edit', methods: ['GET', 'POST'])]
+    #[Route('/{slug}/edit', name: 'edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Program $program, ProgramRepository $programRepository): Response
     {
         $form = $this->createForm(ProgramType::class, $program);
