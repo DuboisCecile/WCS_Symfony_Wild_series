@@ -25,7 +25,7 @@ class Season
     private $description;
 
     #[ORM\OneToMany(mappedBy: 'season', targetEntity: Episode::class)]
-    private $episode;
+    private $episodes;
 
     #[ORM\ManyToOne(targetEntity: Program::class, inversedBy: 'seasons')]
     #[ORM\JoinColumn(nullable: false)]
@@ -33,7 +33,7 @@ class Season
 
     public function __construct()
     {
-        $this->episode = new ArrayCollection();
+        $this->episodes = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -81,9 +81,9 @@ class Season
     /**
      * @return Collection<int, Episode>
      */
-    public function getEpisode(): Collection
+    public function getEpisodes(): Collection
     {
-        return $this->episode;
+        return $this->episodes;
     }
 
     public function addEpisode(Episode $episode): self
@@ -118,5 +118,10 @@ class Season
         $this->program = $program;
 
         return $this;
+    }
+
+    public function getSelector(): string
+    {
+        return $this->getProgram()->getTitle() . ' - Saison ' . $this->getNumber();
     }
 }

@@ -5,9 +5,12 @@
 
 {% block main %}
 	<h1>Season</h1>
-
 	<table class="table">
 		<tbody>
+			<tr>
+				<th>Program</th>
+				<td>{{ season.program.title }}</td>
+			</tr>
 			<tr>
 				<th>Id</th>
 				<td>{{ season.id }}</td>
@@ -23,6 +26,22 @@
 			<tr>
 				<th>Description</th>
 				<td>{{ season.description }}</td>
+			</tr>
+			<tr>
+				<th>Episodes</th>
+				<td>
+					<ul>
+						{% for episode in season.episodes %}
+							<li>
+								<a href="{{ path("app_episode_show", { slug: episode.slug}) }}">{{ episode.title}}</a>
+
+							</li>
+						{% else %}
+							<li>Aucun épisode pour cette saison</li>
+						{% endfor %}
+					</ul>
+				</td>
+
 			</tr>
 		</tbody>
 	</table>

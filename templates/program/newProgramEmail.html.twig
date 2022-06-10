@@ -1,0 +1,21 @@
+{% extends 'emailLayout.html.twig' %}
+
+{% block title %}
+	New program
+{% endblock title %}
+
+{% block h1 %}New Program
+{% endblock h1 %}
+
+{% block pHello %}
+	Hello, the new program
+	{{ program.title }}
+	has been created on Wild Series
+{% endblock pHello %}
+
+{% block pSynopsis %}
+	Synopsis :
+	{{program.synopsis }}
+{% endblock pSynopsis %}
+
+{% block links %}{% endblock links %}

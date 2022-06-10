@@ -5,9 +5,16 @@
 
 {% block main %}
 	<h1>Episode</h1>
-
 	<table class="table">
 		<tbody>
+			<tr>
+				<th>Program</th>
+				<td>{{ episode.season.program.title }}</td>
+			</tr>
+			<tr>
+				<th>Season</th>
+				<td>{{ episode.season.number }}</td>
+			</tr>
 			<tr>
 				<th>Id</th>
 				<td>{{ episode.id }}</td>
@@ -29,7 +36,7 @@
 
 	<a href="{{ path('app_episode_index') }}">back to list</a>
 
-	<a href="{{ path('app_episode_edit', {'id': episode.id}) }}">edit</a>
+	<a href="{{ path('app_episode_edit', {'slug': episode.slug}) }}">edit</a>
 
 	{{ include('episode/_delete_form.html.twig') }}
 {% endblock %}

@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Season;
 use App\Form\SeasonType;
 use App\Repository\SeasonRepository;
+use App\Repository\ProgramRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -41,7 +42,7 @@ class SeasonController extends AbstractController
     }
 
     #[Route('/{id}', name: 'app_season_show', methods: ['GET'])]
-    public function show(Season $season): Response
+    public function show(Season $season, ProgramRepository $programRepository): Response
     {
         return $this->render('season/show.html.twig', [
             'season' => $season,

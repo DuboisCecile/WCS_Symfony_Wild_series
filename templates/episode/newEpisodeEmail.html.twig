@@ -1,0 +1,30 @@
+{% extends 'emailLayout.html.twig' %}
+
+{% block title %}
+	New episode
+{% endblock title %}
+
+{% block h1 %}New episode
+{% endblock h1 %}
+
+{% block pHello %}
+	Hello, the new episode
+	{{ episode.title }}
+	has been created on Wild Series
+{% endblock pHello %}
+
+{% block pInfos %}
+	This episode belongs to season
+	{{episode.season.number }}
+	of program
+	{{episode.season.program.title}}
+{% endblock pInfos %}
+
+{% block pSynopsis %}
+	Synopsis :
+	{{episode.synopsis }}
+{% endblock pSynopsis %}
+
+{% block links %}
+	<a href="http://127.0.0.1:8000/episode/">Episodes</a>
+{% endblock links %}

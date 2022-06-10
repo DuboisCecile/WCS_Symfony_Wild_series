@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<title>
+			{% block title %}{% endblock title %}
+		</title>
+		{% block stylesheets %}
+			{{ encore_entry_link_tags('app') }}
+		{% endblock %}
+	</head>
+	<body class="bg-secondary">
+		<h1>
+			{% block h1 %}{% endblock h1 %}
+		</h1>
+
+		<p>
+			{% block pHello %}{% endblock pHello %}
+		</p>
+		<p>
+			{% block pInfos %}{% endblock pInfos %}
+		</p>
+		<p>
+			{% block pSynopsis %}{% endblock pSynopsis %}
+		</p>
+		{% block links %}
+		{% endblock links %}
+	</body>
+</html>

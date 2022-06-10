@@ -6,6 +6,8 @@ use App\Entity\Episode;
 use App\Form\EpisodeType;
 use App\Repository\EpisodeRepository;
 use App\Service\Slugify;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Email;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -23,7 +25,7 @@ class EpisodeController extends AbstractController
     }
 
     #[Route('/new', name: 'app_episode_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EpisodeRepository $episodeRepository, Slugify $slugify): Response
+    public function new(Request $request, EpisodeRepository $episodeRepository, Slugify $slugify, MailerInterface $mailer): Response
     {
         $episode = new Episode();
         $form = $this->createForm(EpisodeType::class, $episode);
@@ -33,6 +35,14 @@ class EpisodeController extends AbstractController
             $slug = $slugify->generate($episode->getTitle());
             $episode->setSlug($slug);
             $episodeRepository->add($episode, true);
+
+            $email = (new Email())
+                ->from($this->getParameter('mailer_from'))
+                ->to('your_email@example.com')
+                ->subject('Un nouvel épisode vient d\'être ajouté !')
+                ->html($this->renderView('Episode/newEpisodeEmail.html.twig', ['episode' => $episode]));
+            $mailer->send($email);
+
 
             return $this->redirectToRoute('app_episode_index', [], Response::HTTP_SEE_OTHER);
         }
@@ -51,6 +61,7 @@ class EpisodeController extends AbstractController
             'episode' => $episode,
         ]);
     }
+
 
     // #[Route('/{id}/edit', name: 'app_episode_edit', methods: ['GET', 'POST'])]
     #[Route('/{slug}/edit', name: 'app_episode_edit', methods: ['GET', 'POST'])]
