@@ -31,6 +31,23 @@
 				<th>Synopsis</th>
 				<td>{{ episode.synopsis }}</td>
 			</tr>
+			<tr>
+				<th>Commentaires</th>
+				<td>
+					<p>{{episode.comments | length}}
+						commentaire(s)</p>
+					<hr/>
+					{% for comment in episode.comments %}
+						<div>
+							<h3>
+								{{ comment.comment }}</h3>
+							<p>{{ comment.user.username }}</p>
+							<p>{{ comment.rate }}</p>
+						</div>
+					{% endfor %}
+
+				</td>
+			</tr>
 		</tbody>
 	</table>
 

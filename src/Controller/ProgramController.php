@@ -11,10 +11,13 @@ use Symfony\Component\Mime\Email;
 use App\Repository\ProgramRepository;
 use App\Repository\SeasonRepository;
 use App\Repository\EpisodeRepository;
+use App\Repository\CommentRepository;
 use App\Form\ProgramType;
+use App\Form\CommentType;
 use App\Entity\Program;
 use App\Entity\Season;
 use App\Entity\Episode;
+use App\Entity\Comment;
 use App\Service\Slugify;
 
 #[Route('/program', name: 'program_')]
@@ -100,10 +103,34 @@ class ProgramController extends AbstractController
     }
 
     #[Route('/{program<^[0-9]+$>}/season/{season<^[0-9]+$>}/episode/{episode<^[0-9]+$>}', name: 'episode_show')]
-    public function showEpisode(Season $season, Program $program, Episode $episode): Response
-    {
+    public function showEpisode(
+        Request $request,
+        Program $program,
+        Season $season,
+        Episode $episode,
+        CommentRepository $commentRepository,
+    ): Response {
+
+        $comment = null;
+        $user = $this->getUser();
+        if ($user) {
+            $comment = new Comment($episode, $user);
+        }
+
+        $commentForm = $this->createForm(CommentType::class, $comment);
+        $commentForm->handleRequest($request);
+        if ($commentForm->isSubmitted() && $commentForm->isValid()) {
+            $commentRepository->add($comment, true);
+            return $this->redirect($request->getUri());
+        }
+
+
         return $this->render('program/episode_show.html.twig', [
-            'program' => $program, 'season' => $season, 'episode' => $episode,
+            'program' => $program,
+            'season' => $season,
+            'episode' => $episode,
+            'form' => $commentForm->createView(),
+            'comments' => $commentRepository->findAll()
         ]);
     }
 

@@ -15,6 +15,30 @@
 		</div>
 
 	</div>
+	<div>
+		<h3>Commentaires</h3>
+		<p>{{episode.comments | length}}
+			commentaire(s)</p>
+		<hr/>
+		<ul>
+			{% for comment in episode.comments %}
+				<li>
+					<p>{{ comment.comment }}</p>
+					<p>{{ 'Auteur : ' ~ comment.author.username }}</p>
+					<p>{{ 'Note : ' ~ comment.rate }}</p>
+				</li>
+			{% endfor %}
+		</ul>
+	</div>
+
+	{% if app.user %}
+		<h2>Ajouter un commentaire</h2>
+		{{ form_start(form) }}
+		{{ form_widget(form) }}
+		<button class="btn">{{ button_label|default('Enregistrer') }}</button>
+		{{ form_end(form) }}
+	{% endif %}
+
 
 	<a href="{{ path("program_season_show", { season: season.id, program: program.id }) }}">
 		Retour à la saison
