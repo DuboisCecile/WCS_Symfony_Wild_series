@@ -8,6 +8,8 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\Mime\Email;
 use App\Repository\ProgramRepository;
 use App\Repository\SeasonRepository;
@@ -149,5 +151,30 @@ class ProgramController extends AbstractController
         }
 
         return $this->redirectToRoute('program_index', [], Response::HTTP_SEE_OTHER);
+    }
+
+    #[Route('delete/{comment_id}', name: 'delete_comment', methods: ['POST'])]
+    #[Entity('comment', options: ['id' => 'comment_id'])]
+    #[IsGranted('ROLE_CONTRIBUTOR')]
+    public function deleteComment(Request $request, Comment $comment, CommentRepository $commentRepository): Response
+    {
+        if (!($this->getUser() === $comment->getAuthor())) {
+            // If not the owner, throws a 403 Access Denied exception
+            throw new AccessDeniedException('Only the author can delete this comment!');
+        }
+
+        $program = $comment->getEpisode()->getSeason()->getProgram()->getId();
+        $season = $comment->getEpisode()->getSeason()->getId();
+        $episode = $comment->getEpisode()->getId();
+        // dd($program, $season, $episode);
+        if ($this->isCsrfTokenValid('delete' . $comment->getId(), $request->request->get('_token'))) {
+            $commentRepository->remove($comment, true);
+        }
+
+        return $this->redirectToRoute('program_episode_show', [
+            'program' => $program,
+            'season' => $season,
+            'episode' => $episode
+        ]);
     }
 }
